@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Text Prompt - CPRF</title>
+    <style type="text/css">
+        /* --- Global & Container Styles --- */
+        :root {
+            --primary-blue: #1E90FF; /* Dodger Blue */
+            --secondary-green: #3CB371; /* Medium Sea Green */
+            --background-light: #f9f9fb;
+            --card-white: #ffffff;
+            --text-dark: #333;
+            --border-light: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px; /* Increased padding for better spacing */
+            background-color: var(--card-white);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        header h2 {
+            color: var(--primary-blue);
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        /* --- 1. Grid Layout for CPRF/Examples --- */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr; /* Left column slightly wider */
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            padding: 25px;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
+        }
+        
+        .column h3 {
+            color: var(--primary-blue);
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-light);
+            font-size: 1.4em;
+        }
+
+
+        /* 2. CPRF Input Styling (Left Column) */
+        .cprf-input-group label {
+            display: block;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: var(--text-dark); /* More subtle color */
+            font-size: 1.1em;
+        }
+
+        .cprf-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            box-sizing: border-box;
+            min-height: 80px; 
+            resize: vertical;
+            overflow-y: auto; /* Auto scroll */
+            transition: border-color 0.3s;
+        }
+
+        .cprf-input:focus{
+            outline: none;
+            border: 1px solid var(--primary-blue);
+            box-shadow: 0 0 5px rgba(30, 144, 255, 0.4);
+        }
+        
+        /* 3. Buttons */
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .primary-btn { 
+            background-color: var(--primary-blue); 
+            color: white; 
+            font-size: 1.1em;
+        }
+        .primary-btn:hover { background-color: #1a74d2; }
+        
+        .secondary-btn { 
+            background-color: #f0f4f7; 
+            color: var(--text-dark); 
+            border: 1px solid #ccc;
+        }
+        .secondary-btn:hover { background-color: #e2e7ec; }
+
+        .full-width-btn {
+            width: 100%;
+            margin-top: 25px;
+        }
+        
+        /* --- NEW: Master Toggle Styles --- */
+        .main-accordion-header {
+            width: 100%;
+            background-color: var(--primary-blue); /* Darker background for prominence */
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.4em;
+            margin-bottom: 15px; 
+            
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .main-accordion-header:hover {
+            background-color: #1a74d2; 
+        }
+
+        /* Dropdown Arrow/Icon Styling for the MAIN toggle */
+        .main-accordion-header::after {
+            content: '▲'; 
+            font-size: 0.8em;
+            margin-left: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .main-accordion-header.active::after {
+            transform: rotate(0deg); 
+            content: '▲';
+        }
+
+        .main-accordion-header:not(.active)::after {
+            transform: rotate(180deg); 
+            content: '▼';
+        }
+        
+        .main-accordion-content {
+            max-height: 2000px; /* Large value to allow content to fit when active */
+            overflow: hidden;
+            transition: max-height 0.6s ease-in-out;
+            padding-top: 5px; /* Small buffer */
+        }
+
+        .main-accordion-content:not(.active) {
+            max-height: 0;
+            padding-top: 0;
+            margin-bottom: 0;
+        }
+
+
+        /* 4. Individual Accordion/Collapsible Styles */
+        .accordion-header {
+            width: 100%;
+            background-color: #e9f0ff; /* Light blue background */
+            color: var(--primary-blue);
+            padding: 12px 15px;
+            border: 1px solid var(--primary-blue);
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 1.05em;
+            
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-header:hover {
+            background-color: #d8e5ff;
+        }
+        
+        /* Individual Dropdown Arrow icon */
+        .accordion-header::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Rotation effect when the individual accordion is active */
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 0 15px;
+            border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            border-radius: 0 0 6px 6px;
+            background-color: var(--card-white);
+            max-height: 0; 
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+        }
+        
+        /* Ensure the first individual accordion item fits tightly under the main toggle */
+        .accordion-container .accordion-item:first-child .accordion-header {
+            margin-top: 0;
+        }
+
+
+        .accordion-content.active {
+            max-height: 600px; 
+            padding: 15px;
+        }
+        
+        .accordion-content h4 {
+            color: var(--secondary-green);
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        
+        /* Tidy Example Output (Bullet Points and Pre-formatted text) */
+        .example-output {
+            background-color: #f0f8ff; /* Very light blue background */
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-size: 17px;
+            line-height: 1.6;
+            border: 1px dashed var(--primary-blue);
+        }
+        
+        .example-output strong {
+            color: #000;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .load-example-btn {
+            background-color: var(--secondary-green);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 15px 0 5px;
+            transition: background-color 0.2s;
+        }
+        .load-example-btn:hover {
+            background-color: #319e61;
+        }
+
+        /* 5. Bottom Action Section */
+        .bottom-action-section {
+            padding-top: 20px;
+            margin-top: 30px;
+            border-top: 2px solid var(--primary-blue);
+            text-align: center;
+        }
+
+        .example-result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9fb;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+        }
+
+        .example-result h4 {
+            color: var(--secondary-green);
+            margin-bottom: 10px;
+        }
+
+        .example-result ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+        .back-to-dashboard-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-to-dashboard-btn:hover {
+            background-color: #1a74d2;
+        }
+        #reset-cprf-btn {
+            background-color: steelblue; /* Steel blue background */
+            color: white; /* White text */
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        #reset-cprf-btn:hover {
+            background-color: #b0c4de; /* Pale blue hover effect */
+        }
+
+        @media (max-width: 768px) {
+            /* Adjust container padding for smaller screens */
+            .container {
+                padding: 15px;
+            }
+
+            /* Stack the columns vertically */
+            .workspace-grid {
+                display: block;
+            }
+
+            .column {
+                margin-bottom: 20px; /* Add spacing between stacked columns */
+                padding: 15px;
+            }
+
+            /* Adjust header font size */
+            header h2 {
+                font-size: 1.5em;
+                margin-top: 30px;
+            }
+
+            /* Adjust accordion header font size and padding */
+            .accordion-header {
+                font-size: 1em;
+                padding: 10px 12px;
+            }
+
+            /* Adjust button styles for smaller screens */
+            .action-btn {
+                font-size: 0.9em;
+                padding: 10px 20px;
+            }
+
+            .back-to-dashboard-btn {
+                font-size: 0.8em;
+                padding: 8px 15px;
+                margin: 10px 0;
+                margin-top: -10px;
+            }
+
+            /* Adjust textarea for better usability on small screens */
+            .cprf-input {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+
+            /* Adjust accordion content padding */
+            .accordion-content {
+                padding: 10px;
+            }
+        }
+    </style>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h2>📝 Configure Your Text Prompt (CPRF)</h2>
+            <a href="index.html" class="back-to-dashboard-btn">Back to Dashboard</a>
+        </header>
+
+        <div class="workspace-grid">
+            
+            <div class="column left-col">
+                <form id="cprf-form" method="POST">
+                    <h3>⚙️ Prompt အချက်အလက် ဖြည့်သွင်းရန်</h3>
+                
+                    <div class="cprf-input-group">
+                        <label for="content-main">Context - သင်ဘယ်သူလဲ (သို့) သင့်လုပ်ငန်းအကြောင်း ပြည့်စုံစွာဖော်ပြပါ</label>
+                        <textarea id="content-main" class="cprf-input" placeholder="ဥပမာ - ကျွန်တော်သည် မန္တလေးမြို့ရှိ လက်ဖက်ရည်ဆိုင်ပိုင်ရှင်ဖြစ်ပါသည်။ ကျွန်ုပ်၏ဆိုင်တွင် မြန်မာ့ရိုးရာအစားအစာများ ရောင်းချပါသည်။"></textarea>
+                    </div>
+                    
+                    <div class="cprf-input-group">
+                        <label for="persona-main">Persona - AI ကို ဘယ်လိုလူမျိုးဖြစ်စေချင်တာလဲ?</label>
+                        <textarea id="persona-main" class="cprf-input" placeholder="ဥပမာ - သင်သည် နိုင်ငံတကာတွင် အောင်မြင်မှုများရရှိထားသော စီးပွားရေးပညာရှင်တစ်ဦးဖြစ်သည်။"></textarea>
+                    </div>
+    
+                    <div class="cprf-input-group">
+                        <label for="result-main">Result - AI ကို သင်လုပ်ခိုင်းစေချင်တာ (နှင့်) AI ထံမှ သင်မျှော်လင့်သည့် အဖြေ၏ရလဒ်</label>
+                        <textarea id="result-main" class="cprf-input" placeholder="ဥပမာ - ကျွန်ုပ်၏လုပ်ငန်းအတွက် အွန်လိုင်းတွင် လူသိများစေမည့် စိတ်ကူးအသစ် (၃) ခုကို အသေးစိတ်ရေးပေးပါ။"></textarea>
+                    </div>
+    
+                    <div class="cprf-input-group">
+                        <label for="format-main">Format - အဖြေကို မည်သည့်ပုံစံဖြင့် ရရှိလိုပါသလဲ</label>
+                        <textarea id="format-main" class="cprf-input" placeholder="ဥပမာ - အဓိကအချက်များကို နံပါတ်စာရင်း (Numbered List) ဖြင့် ရေးသားပြီး အချက်တစ်ခုစီအတွက် စာပိုဒ်ငယ်တစ်ခုစီ ရှင်းပြပေးပါ။"></textarea>
+                    </div>
+                    
+                    <input type="hidden" name="source" value="text">
+                    
+                    <button type="submit" id="generate-prompt-btn" class="action-btn primary-btn full-width-btn" style="margin-bottom: 10px;">✅ Generate & View Prompt</button>
+                    
+                    </form>
+                
+                <button id="reset-cprf-btn" class="action-btn secondary-btn full-width-btn">Clear Input Fields</button>
+            </div>
+
+            <div class="column right-col">
+                
+                <button class="main-accordion-header" id="main-examples-toggle">
+                    💡 ဥပမာများ - ကြည့်ရန်
+                </button>
+
+                <div class="main-accordion-content" id="main-examples-content">
+
+                    <div class="accordion-container">
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-1">
+                                ဥပမာ ၁
+                            </button>
+                            <div class="accordion-content" id="example-1">
+                                <pre class="example-output">
+C - ကျွန်ုပ်သည် ရန်ကုန်မြို့တွင် စားသောက်ဆိုင်လုပ်ငန်း စတင်ရန် စီစဉ်နေသော စွန့်ဦးတီထွင်သူဖြစ်သည်။ စတင်ရန်အတွက် အဓိကခြေလှမ်းများ လိုအပ်ပါသည်။
+P - သင်သည် နာမည်ကြီး စားသောက်ဆိုင်လုပ်ငန်း စီမံခန့်ခွဲမှု ကျွမ်းကျင်သူ တစ်ဦးဖြစ်ပြီး မြန်မာနိုင်ငံ၏ စျေးကွက်ကို ကောင်းစွာနားလည်သည်။
+R - စားသောက်ဆိုင်အသစ်တစ်ခုကို အောင်မြင်စွာ ဖွင့်လှစ်နိုင်ရန်အတွက် အရေးကြီးဆုံး အဆင့် ၅ ဆင့် ကို အသေးစိတ် ရှင်းပြပေးပါ။
+F - အချက်အလက်များကို နံပါတ်စဉ်စာရင်း (Numbered List) ဖြင့် ရေးသားပြီး အချက်တစ်ခုစီအောက်တွင် စာပိုဒ်ငယ်တစ်ခုစီ ရှင်းပြပေးပါ။
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>Act as a highly experienced Restaurant Management Consultant who has a deep understanding of the Myanmar market. Create a comprehensive guide detailing the 5 most crucial steps for successfully opening a new restaurant in Yangon. The guide must be formatted as a Numbered List, with a detailed explanatory paragraph following each step.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-2">
+                                ဥပမာ ၂
+                            </button>
+                            <div class="accordion-content" id="example-2">
+                                <pre class="example-output">
+C - ကျွန်တော်သည် အသက် ၂၅ နှစ်အရွယ် အမျိုးသား စာပေဝါသနာရှင်တစ်ဦးဖြစ်ပြီး မြန်မာ့ရိုးရာကဗျာများကို နားလည်ချင်ပါသည်။
+P - သင်သည် မြန်မာ့စာပေ ပါမောက္ခကြီး တစ်ဦးဖြစ်ပြီး ရှေးဟောင်းကဗျာအမျိုးအစားများနှင့် ၎င်းတို့၏ ရသမြောက်ပုံကို ကျွမ်းကျင်စွာ ရှင်းပြနိုင်သူဖြစ်သည်။
+R - မြန်မာ့ကဗျာအမျိုးအစား (၃) မျိုး၏ ထူးခြားချက်များ နှင့် ရေးဖွဲ့ပုံ နည်းစနစ်များ ကို ဥပမာများနှင့်တကွ ရှင်းပြပေးပါ။
+F - ခေါင်းစဉ်ခွဲ (Sub-heading) များဖြင့် ဖွဲ့စည်းထားသော ရှည်လျားသော စာပိုဒ်များ ဖြင့် ရေးသားပါ။
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>You are a distinguished Professor of Myanmar Literature specializing in classical poetry, including its categories and aesthetic qualities. Explain three specific types of Myanmar traditional poetry, detailing their unique characteristics and compositional techniques with relevant examples. The response should be structured into long paragraphs under clear sub-headings.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-3">
+                                ဥပမာ ၃
+                            </button>
+                            <div class="accordion-content" id="example-3">
+                                <pre class="example-output">
+C - ကျွန်မသည် အသက် ၅၀ အရွယ် အမျိုးသမီး၊ အိမ်ခြံမြေ ရင်းနှီးမြှုပ်နှံမှုတွင် အတွေ့အကြုံမရှိသေးသူဖြစ်သည်။
+P - သင်သည် အတွေ့အကြုံရင့်ကျက်သော အိမ်ခြံမြေရင်းနှီးမြှုပ်နှံမှု အတိုင်ပင်ခံ (Consultant) တစ်ဦးဖြစ်ပြီး စွန့်စားမှု (Risk) နည်းသော နည်းလမ်းများကို အကြံပေးရာတွင် အလွန်ထူးချွန်သူတစ်ဦးဖြစ်သည်။
+R - ရန်ကုန်မြို့တွင် ပထမဆုံးအကြိမ် ရင်းနှီးမြှုပ်နှံမှုအတွက် ရှောင်ရန်/ဆောင်ရန် အချက် ၄ ချက် ကို အသေးစိတ် ဖော်ပြပေးပါ။
+F - Bullet Points ပုံစံဖြင့် ရှင်းပြပြီး ရင်းနှီးမြှုပ်နှံမှုအန္တရာယ် (Risk) များကို ဇယားငယ်ဖြင့် ဖော်ပြပါ။
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>Act as a seasoned Real Estate Investment Consultant who excels in advising on low-risk strategies. Provide 4 detailed essential guidelines on the dos and don'ts for a first-time property investment in Yangon. Format the main points using Bullet Points, and include a small Table summarizing the associated investment risks.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-4">
+                                ဥပမာ ၄
+                            </button>
+                            <div class="accordion-content" id="example-4">
+                                <pre class="example-output">
+C - ကျွန်ုပ်သည် တက္ကသိုလ်ဝင်တန်း ကျောင်းသားတစ်ဦးဖြစ်ပြီး စာကျက်ရာတွင် အာရုံစူးစိုက်မှု နည်းပါးနေပါသည်။
+P - သင်သည် လူငယ်များအတွက် နာမည်ကြီး စိတ်ပညာရှင် တစ်ဦးဖြစ်ပြီး မှတ်ဉာဏ်အား မြှင့်တင်ရေးနည်းလမ်းများကို သိသည်။
+R - အာရုံစူးစိုက်မှု ပြန်လည်ကောင်းမွန်စေရန်နှင့် စာကျက်မှတ်ရာတွင် အမြန်ဆုံး အလွတ်ရစေရန်အတွက် ထိရောက်သော နည်းလမ်း ၇ ချက် ကို ရေးသားပေးပါ။
+F - အဆင့်ဆင့် ညွှန်ကြားချက်များ (Step-by-step instructions) ပုံစံဖြင့် ရေးသားပေးပါ။
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>You are a famous Youth Psychologist and an expert in memory enhancement techniques. Write 7 effective methods to help a high school student significantly improve focus and achieve faster memorization while studying for exams. The response must be written as step-by-step instructions.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-5">
+                                ဥပမာ ၅
+                            </button>
+                            <div class="accordion-content" id="example-5">
+                                <pre class="example-output">
+C - ကျွန်တော်တို့က မြန်မာ့ရိုးရာလက်မှုပညာ ပစ္စည်းများကို Online တွင် ရောင်းချသော အသေးစားလုပ်ငန်းတစ်ခုဖြစ်သည်။
+P - သင်သည် Digital Marketing ကျွမ်းကျင်သူ ဖြစ်ပြီး မြန်မာ့ထုတ်ကုန်များကို နိုင်ငံတကာစျေးကွက်သို့ ရောင်းချရာတွင် အတွေ့အကြုံရှိသူဖြစ်သည်။
+R - ကျွန်ုပ်တို့၏ ရိုးရာလက်မှုပညာ ပစ္စည်းများအား နိုင်ငံတကာဖောက်သည်များဆီသို့ ရောက်ရှိစေရန် အဓိက စျေးကွက်ရှာဖွေရေး နည်းလမ်း ၄ ခု ကို အကြံပြုပေးပါ။
+F - ဇယားကွက် (Table) ပုံစံဖြင့် ဖော်ပြပြီး "နည်းလမ်း"၊ "ပလက်ဖောင်း" နှင့် "မျှော်မှန်းရလဒ်" ဟူသော ကော်လံ ၃ ခု ပါဝင်စေပါ။
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>You are a Digital Marketing Expert with proven experience in selling Myanmar traditional crafts to the international market. Recommend 4 key digital marketing strategies to effectively reach and engage international customers for a business selling Myanmar handicrafts online. The advice must be presented in a Table format with three columns: "Strategy", "Platform", and "Expected Outcome".</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                
+            </div>
+        </div> 
+        
+        <div class="bottom-action-section">
+        </div>
+        
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+        // 1. Master Examples Toggle Logic (Kept as is)
+        const mainToggleBtn = document.getElementById("main-examples-toggle");
+        const mainContent = document.getElementById("main-examples-content");
+
+        if (mainToggleBtn && mainContent) {
+            mainToggleBtn.addEventListener("click", () => {
+                mainToggleBtn.classList.toggle("active");
+                mainContent.classList.toggle("active");
+            });
+            // Set default state: The main toggle should start OPEN
+            mainToggleBtn.classList.add("active");
+            mainContent.classList.add("active");
+        }
+
+
+        // 2. Individual Example Accordion Logic (Kept as is)
+        const accordionHeaders = document.querySelectorAll(".accordion-header");
+
+        accordionHeaders.forEach(header => {
+            header.addEventListener("click", () => {
+                const targetId = header.getAttribute("data-example");
+                const targetContent = document.getElementById(targetId);
+
+                accordionHeaders.forEach(h => {
+                    if (h !== header) {
+                        h.classList.remove("active");
+                        document.getElementById(h.getAttribute("data-example")).classList.remove("active");
+                    }
+                });
+
+                targetContent.classList.toggle("active");
+                header.classList.toggle("active");
+            });
+        });
+
+        document.querySelectorAll(".accordion-content").forEach(content => content.classList.remove("active"));
+        document.querySelectorAll(".accordion-header").forEach(header => header.classList.remove("active"));
+        
+
+        const generatePromptBtn = document.getElementById("generate-prompt-btn");
+
+if (generatePromptBtn) {
+    // Must use 'async' because the translation process is asynchronous
+    generatePromptBtn.addEventListener("click", async (event) => {
+        event.preventDefault(); 
+        
+        // 1. Retrieve the Burmese inputs
+        const context_mm = document.getElementById("content-main").value;
+        const persona_mm = document.getElementById("persona-main").value;
+        const result_mm = document.getElementById("result-main").value;
+        const format_mm = document.getElementById("format-main").value;
+        
+        // Combine all inputs into a single string for translation
+        const fullBurmesePrompt = `${context_mm}${persona_mm}${result_mm}${format_mm}`;
+
+        // Display a loading message
+        generatePromptBtn.textContent = 'Translating and Generating...';
+        generatePromptBtn.disabled = true;
+
+        try {
+            // 2. Call the new client-side translation function
+            const final_prompt_en = await translateText(fullBurmesePrompt);
+
+            // 3. Package the final result data
+            const dataToSave = {
+                success: true,
+                source: 'text',
+                context_mm: context_mm,
+                persona_mm: persona_mm,
+                result_mm: result_mm,
+                format_mm: format_mm,
+                // The dynamically translated result
+                final_prompt_en: final_prompt_en
+            };
+
+            // 4. Save the data to localStorage
+            localStorage.setItem('promptData', JSON.stringify(dataToSave));
+
+            // Restore button state
+            generatePromptBtn.textContent = '✅ Generate & View Prompt';
+            generatePromptBtn.disabled = false;
+
+            // 5. Redirect to the result page
+            window.location.href = `result.html`;
+
+        } catch (error) {
+            // Restore button state and show alert
+            generatePromptBtn.textContent = '❌ Translation Failed. Try Again.';
+            generatePromptBtn.disabled = false;
+            console.error('Translation Error:', error);
+            alert('Client-Side Translation Error: ' + error.message + '. Please ensure your browser is connected to the internet.');
+        }
+    });
+}
+
+// --- NEW: Client-Side Translation Helper Function ---
+// This uses a non-official Google Translate endpoint that works well for quick tests.
+function translateText(text) {
+    return new Promise((resolve, reject) => {
+        if (!text) return resolve('');
+
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=my&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // The translation is usually the first element of the first array
+                if (data && data[0] && data[0][0] && data[0][0][0]) {
+                    const translatedText = data[0].map(segment => segment[0]).join('');
+                    resolve(translatedText);
+                } else {
+                    reject(new Error("Translation API returned unexpected format."));
+                }
+            })
+            .catch(error => {
+                reject(new Error("Network or API call failed: " + error.message));
+            });
+    });
+}
+    // --- Clear Input Fields Logic (Kept as is) ---
+    const resetBtn = document.getElementById("reset-cprf-btn");
+
+    if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+            document.getElementById("content-main").value = '';
+            document.getElementById("persona-main").value = '';
+            document.getElementById("result-main").value = '';
+            document.getElementById("format-main").value = '';
+            
+            document.getElementById("content-main").focus();
+        });
+    }
+    });
+
+    </script>
+</body>
+</html>

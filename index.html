@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Burmese to English Translator & AI Prompt Generator</title>
+    <style>
+        /* Basic Reset and Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f7f6;
+        }
+
+        /* 1. Header Styling */
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        /* 2. Main Content / Description Styling */
+        .main-content {
+            padding: 20px 20px;
+            max-width: 800px;
+            margin: 10px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .main-content h2 {
+            color: #007BFF;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .main-content p {
+            line-height: 1.6;
+            font-size: 1.1em;
+            text-align: left;
+        }
+
+        /* 3. Banner/Button Section Styling */
+        .banner {
+            background-color: #343a40;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .banner h3 {
+            margin-top: 0;
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+        }
+
+        .banner button {
+            background-color: #007bff; /* Green for action */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            min-width: 250px;
+        }
+
+        .banner button:hover {
+            background-color: #0056b3;
+        }
+
+        #generateImageBtn {
+            background-color: #ffc107; /* Yellow/Orange */
+            color: var(--text-color);
+        }
+        #generateImageBtn:hover {
+            background-color: #e0a800;
+        }
+
+        #generateVideoBtn {
+            background-color: #dc3545; /* Red */
+        }
+        #generateVideoBtn:hover {
+            background-color: #c82333;
+        }
+        footer {
+    background-color: #343a40;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; /* Ensures responsiveness for smaller screens */
+}
+
+.contact-info, .social-media {
+    flex: 1; /* Each column takes equal space */
+    min-width: 250px; /* Ensures columns don't shrink too much */
+}
+
+.info-section {
+    text-align: center;
+    margin: 5px auto;
+    padding: 10px;
+    max-width: 800px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-section h4 {
+    font-size: 1.9em;
+    color: #007BFF;
+    margin-bottom: 15px;
+}
+
+.info-section p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #333;
+}.footer-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; /* Ensures responsiveness for smaller screens */
+    text-align: center;
+}
+
+.contact-info, .social-media {
+    flex: 1; /* Each column takes equal space */
+    min-width: 250px; /* Ensures columns don't shrink too much */
+}
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; /* Ensures responsiveness for smaller screens */
+}
+
+.contact-info, .social-media {
+    flex: 1; /* Each column takes equal space */
+    min-width: 250px; /* Ensures columns don't shrink too much */
+    text-align: left;
+}
+
+/* --- Base Footer Styles --- */
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-container {
+    display: flex;
+    /* flex-wrap: wrap;  */
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    
+    /* NEW: Default to center stacking for mobile */
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center; 
+    text-align: center; /* Center section titles/text for mobile */
+}
+
+.footer-section {
+    flex: 1; 
+    min-width: 300px; /* Increased min-width for better content display */
+    padding: 10px 0;
+    
+    /* Tweak: Force text within sections to align left for readability, 
+       even if the section block itself is centered */
+    text-align: center;
+}
+
+/* --- Media Query for Tablet/Desktop (768px and up) --- */
+@media (min-width: 768px) {
+    .footer-container {
+        /* Revert to row layout for desktop */
+        flex-direction: row; 
+        /* Revert to justify columns across the full width */
+        justify-content: space-between; 
+        /* Remove alignment specific to column mode */
+        align-items: flex-start; 
+        text-align: left; 
+    }
+
+    .footer-section {
+        /* Allow sections to grow dynamically */
+        flex: 1; 
+        /* Ensure standard desktop alignment */
+        text-align: center; 
+    }
+
+    .footer-section:nth-child(1){
+        width: 200px;
+    }
+}
+
+
+/* --- General Section Styles (Retained/Refined) --- */
+
+footer h4 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #007BFF;
+    text-transform: uppercase;
+    /* Ensure title is bold/prominent */
+    font-weight: 700; 
+}
+
+footer p, footer ul {
+    margin: 5px 0;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+footer ul li {
+    margin: 5px 0;
+}
+
+footer ul li a {
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer ul li a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* --- Footer Bottom --- */
+.footer-bottom {
+    margin-top: 20px;
+    border-top: 1px solid #4a4a4a;
+    padding-top: 10px;
+    font-size: 0.9em;
+    text-align: center; /* Keep copyright centered */
+}
+
+.footer-bottom a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.footer-bottom a:hover {
+    text-decoration: underline;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>Prompt Master (မြန်မာ) (သို့မဟုတ်) AI စကားပြန်</h2>
+    </header>
+
+    <div class="main-content">
+        <h2>မြန်မာလို မေးပြီး AI ကို စနစ်တကျ ခိုင်းစေလိုက်ပါ။</h2>
+        <p>
+            AI တွေ (ဥပမာ- Gemini, ChatGPT, Midjourney) ကို ဘယ်လိုမေးရမလဲ၊ ဘယ်လိုအမိန့်ပေးရမလဲ မသိလို့ စိတ်ပူနေစရာ မလိုတော့ပါဘူး။ ဒီ Platform ဟာ AI ကို စတင်အသုံးပြုသူတွေအတွက် ရည်ရွယ်ဖန်တီးထားတာပါ။
+
+            သင့်ရဲ့ စိတ်ကူးတွေကို မြန်မာလို အသေးစိတ်ရေးသား ပြီးတာနဲ့၊ AI နားလည်မယ့် စနစ်တကျရှိတဲ့ အင်္ဂလိပ် Prompt  အဖြစ် အလွယ်တကူ ပြောင်းလဲပေးမှာ ဖြစ်ပါတယ်။
+
+         </p>
+        <p>
+            ဒါကြောင့် သင်ဟာ စာသား (Text) ဖန်တီးချင်တာပဲဖြစ်ဖြစ်၊ ပုံ (Image) ထုတ်ခိုင်းချင်တာပဲဖြစ်ဖြစ်၊ ဗီဒီယို (Video) လုပ်ခိုင်းချင်တာပဲဖြစ်ဖြစ်၊ အောက်ပါ ရွေးချယ်စရာများထဲက တစ်ခုကို ရွေးချယ်ပြီး စတင်လိုက်ရုံပါပဲ!            
+        </p>
+    </div>
+
+    <div class="banner">
+        <h3>ဒီနေ့ ဘာဖန်တီးကြမလဲ?</h3>
+        <div class="button-container">
+            <button id="generateTextBtn" onclick="window.location.href='text-prompt.html'">
+                <i class="fas fa-text-width fa-2x"></i>  စာသား (TEXT) Prompt ဖန်တီးရန်
+            </button>
+            <button id="generateImageBtn" onclick="window.location.href='image-prompt.html'">
+                <i class="fas fa-images fa-2x"></i>  ပုံရိပ် (IMAGE) Prompt ဖန်တီးရန်
+            </button>
+            <button id="generateVideoBtn" onclick="window.location.href='video-prompt.html'">
+                <i class="fas fa-video fa-2x"></i>  ဗီဒီယို (VIDEO) Prompt ဖန်တီးရန်
+            </button>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h4>Our Information</h4>
+        <p>
+            We are dedicated to providing AI-powered solutions to help you create text, images, and videos effortlessly. 
+        </p>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <!-- Information Section -->
+            <div class="footer-section">
+                <h4>INFORMATION</h4>
+                <p>
+                    Contact us at 
+                    <i class="fas fa-envelope"><a href="mailto:acs.consult.mm@gmail.com" target="_blank">acs.consult.mm@gmail.com</a> </i>
+                    <i class="fas fa-phone">+95 9 981 022 455.</i> 
+                </p>
+            </div>
+    
+            <!-- Navigation Section -->
+            <div class="footer-section">
+                <h4>NAVIGATION</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="text-prompt.html">Text </a></li>
+                    <li><a href="image-prompt.html">Image </a></li>
+                    <li><a href="video-prompt.html">Video </a></li>
+                </ul>
+            </div>
+    
+            <!-- Follow Us Section -->
+            <div class="footer-section">
+                <h4>FOLLOW US</h4>
+                <p>
+                    Stay connected: 
+                    
+                    <ul>
+                        <li><a href="https://www.facebook.com/acsmanagement"><i class="fab fa-facebook"></i> Facebook</a> </li>
+                        <li><a href="https://www.tiktok.com/@agrahari.consult"><i class="fab fa-tiktok"></i> Tiktok</a></li>
+                    </ul>
+                    
+                </p>
+            </div>
+    
+            
+    
+        </div>
+    
+        <div class="footer-bottom">
+            <p>&copy; <span id="getyear">2020</span> AI Language Solutions Created by <a href="#">ACS</a>. All rights reserved.</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+        const getyear = document.getElementById('getyear')
+        getyear.innerText = new Date().getFullYear();    </script>
+
+</body>
+</html>
+
+

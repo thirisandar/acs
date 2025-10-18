@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Video Prompt - CPRF</title>
+    <style type="text/css">
+        /* --- Global & Container Styles --- */
+        :root {
+            --primary-blue: #1E90FF; /* Dodger Blue */
+            --secondary-green: #3CB371; /* Medium Sea Green */
+            --background-light: #f9f9fb;
+            --card-white: #ffffff;
+            --text-dark: #333;
+            --border-light: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px; /* Increased padding for better spacing */
+            background-color: var(--card-white);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        header h2 {
+            color: #000;
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        /* --- 1. Grid Layout for CPRF/Examples --- */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr; /* Left column slightly wider */
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            padding: 25px;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
+        }
+        
+        .column h3 {
+            color: #000;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-light);
+            font-size: 1.4em;
+        }
+        /* NOTE: The h3 in the right column is replaced by the .main-accordion-header, 
+           so the h3 style will only apply to the left column now. */
+
+
+        /* 2. CPRF Input Styling (Left Column) */
+        .cprf-input-group label {
+            display: block;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: var(--text-dark); /* More subtle color */
+            font-size: 1.1em;
+        }
+
+        .cprf-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            box-sizing: border-box;
+            min-height: 80px; 
+            resize: vertical;
+            overflow-y: auto; /* Auto scroll */
+            transition: border-color 0.3s;
+        }
+
+        .cprf-input:focus{
+            outline: none;
+            border: 1px solid var(--primary-blue);
+            box-shadow: 0 0 5px rgba(30, 144, 255, 0.4);
+        }
+        
+        /* 3. Buttons */
+        .action-btn {
+            width: 100%;
+            background-color: #dc3545;
+            color: #fff;
+            margin-top: 25px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-btn:hover{
+            background-color: lightcoral;
+            color: #000;
+        }
+
+        .primary-btn { 
+            background-color: var(--primary-blue); 
+            color: white; 
+            font-size: 1.1em;
+        }
+
+        .primary-btn:hover { 
+            background-color: #1a74d2; 
+        }
+        
+
+        
+        /* --- NEW: Master Toggle Styles --- */
+        .main-accordion-header {
+            width: 100%;
+            background-color: #dc3545; /* Darker background for prominence */
+            color: #fff;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.4em;
+            margin-bottom: 15px; 
+            
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .main-accordion-header:hover {
+            background-color: lightcoral;
+            color: #000;
+        }
+
+        /* Dropdown Arrow/Icon Styling for the MAIN toggle */
+        .main-accordion-header::after {
+            content: '▲'; /* Unicode Up Arrow */
+            font-size: 0.8em;
+            margin-left: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .main-accordion-header.active::after {
+            transform: rotate(0deg); 
+        }
+
+        .main-accordion-header:not(.active)::after {
+            transform: rotate(180deg); 
+            content: '▼';
+        }
+        
+        .main-accordion-content {
+            max-height: 2000px; /* Large value to allow content to fit when active */
+            overflow: hidden;
+            transition: max-height 0.6s ease-in-out;
+            padding-top: 5px; /* Small buffer */
+        }
+
+        .main-accordion-content:not(.active) {
+            max-height: 0;
+            padding-top: 0;
+            margin-bottom: 0;
+        }
+
+
+        /* 4. Individual Accordion/Collapsible Styles */
+        .accordion-header {
+            width: 100%;
+            background-color: #af3541; /* Light blue background */
+            color: #fff;
+            padding: 12px 15px;
+            border: 1px solid var(--primary-blue);
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 1.05em;
+            
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-header:hover {
+            background-color: #dc3545;
+            color: #999;
+        }
+        
+        /* Individual Dropdown Arrow icon */
+        .accordion-header::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Rotation effect when the individual accordion is active */
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 0 15px;
+            border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            border-radius: 0 0 6px 6px;
+            background-color: var(--card-white);
+            max-height: 0; 
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+        }
+        
+        /* Ensure the first individual accordion item fits tightly under the main toggle */
+        .accordion-container .accordion-item:first-child .accordion-header {
+            margin-top: 0;
+        }
+
+
+        .accordion-content.active {
+            max-height: 800px; 
+            padding: 15px;
+        }
+        
+        .accordion-content h4 {
+            color: var(--secondary-green);
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        
+        /* Tidy Example Output (Bullet Points and Pre-formatted text) */
+        .example-output {
+            background-color: #f0f8ff; /* Very light blue background */
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-size: 17px;
+            line-height: 1.6;
+            border: 1px dashed var(--primary-blue);
+        }
+        
+        .example-output strong {
+            color: #000;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .load-example-btn {
+            background-color: var(--secondary-green);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 15px 0 5px;
+            transition: background-color 0.2s;
+        }
+        .load-example-btn:hover {
+            background-color: #319e61;
+        }
+
+        /* 5. Bottom Action Section */
+        .bottom-action-section {
+            padding-top: 20px;
+            margin-top: 30px;
+            border-top: 2px solid var(--primary-blue);
+            text-align: center;
+        }
+
+        .example-result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9fb;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+        }
+
+        .example-result h4 {
+            color: var(--secondary-green);
+            margin-bottom: 10px;
+        }
+
+        .example-result ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+        .back-to-dashboard-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color:#dc3545;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-to-dashboard-btn:hover {
+            background-color: lightcoral;
+            color: #000;
+        }
+        #reset-cprf-btn {
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        
+
+        @media (max-width: 768px) {
+            /* Adjust container padding for smaller screens */
+            .container {
+                padding: 15px;
+                margin-top: 50px;
+            }
+            .back-to-dashboard-btn {
+                position: absolute; /* Remove absolute positioning */
+                display: block; /* Make it take full width */
+                width: 100px;
+                height: 30px;
+                padding: 5px 10px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            /* Stack the columns vertically */
+            .workspace-grid {
+                display: block;
+            }
+
+            .column {
+                margin-bottom: 20px; /* Add spacing between stacked columns */
+                padding: 15px;
+            }
+
+            /* Adjust header font size */
+            header h2 {
+                font-size: 1.5em;
+                margin-top: 0;
+            }
+
+            /* Adjust accordion header font size and padding */
+            .accordion-header {
+                font-size: 1em;
+                padding: 10px 12px;
+            }
+
+            /* Adjust button styles for smaller screens */
+            .action-btn {
+                font-size: 0.9em;
+                padding: 10px 20px;
+            }
+
+            /* Adjust textarea for better usability on small screens */
+            .cprf-input {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+
+            /* Adjust accordion content padding */
+            .accordion-content {
+                padding: 10px;
+            }
+        }
+    </style>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h2>Configure Your Video Prompt (SSAELSA)</h2>
+            <a href="index.html" class="back-to-dashboard-btn">Back to Dashboard</a>
+        </header>
+
+        <div class="workspace-grid">
+            
+            <div class="column left-col">
+                <h3>⚙️ Prompt အချက်အလက် ဖြည့်သွင်းရန်</h3>
+                
+                <div class="cprf-input-group">
+                    <label for="style-main">Style - ဖန်တီးမဲ့ Video ကို ဘယ်လိုပုံစံမျိုး လိုချင်ပါသလဲ</label>
+                    <textarea id="style-main" class="cprf-input" placeholder="ဥပမာ - ရုပ်ရှင်ဆန်ဆန်လား၊ ကာတွန်းလား၊ 3D ကာတွန်းလား၊ Anime လား။"></textarea>
+                </div>
+                
+                <div class="cprf-input-group">
+                    <label for="subject-main">Subject - Video ထဲမှာ ကိုယ်ထည့်သွင်းလိုသည့် ဇာတ်ကောင်ကို အသေးစိတ်ဖော်ပြပါ</label>
+                    <textarea id="subject-main" class="cprf-input" placeholder="ဥပမာ - အသက် ၄၀ ဝန်းကျင် မြန်မာအမျိုးသား ပန်းချီဆရာတစ်ဦး၊ ဆံပင်အနက်ရောင်နှင့် မျက်မှန်တပ်ထားသည်"></textarea>
+                </div>
+
+                <div class="cprf-input-group">
+                    <label for="action-main">Action - ကိုယ်ထည့်သွင်းလိုက်တဲ့ ဇာတ်ကောင်က ဘာလုပ်နေပါသလဲ (ဇာတ်ကောင်ရဲ့ လှုပ်ဆောင်မှု)</label>
+                    <textarea id="action-main" class="cprf-input" placeholder="ဥပမာ - အခန်းထဲသို့ ဖြည်းညှင်းစွာ လျှောက်ဝင်လာပြီး၊ စားပွဲပေါ်မှ ခွက်ကို ကောက်ယူသောက်ကာ ပြတင်းပေါက်ကို ကြည့်နေသည်။"></textarea>
+                </div>
+
+                <div class="cprf-input-group">
+                    <label for="environment-main">Environment - ဇာတ်ကောင်က ဘယ်နေရာမှာရှိနေသလဲ (Video ထဲမှာပါသောနေရာ)</label>
+                    <textarea id="environment-main" class="cprf-input" placeholder="ဥပမာ - မီးရောင် မှိန်မှိန်လင်းနေသော ရှေးဟောင်းပစ္စည်းများပြခန်း၊ ဆောင်းရာသီတွင် နှင်းဖုံးနေသော တောင်ကုန်းများ"></textarea>
+                </div>
+                
+                <div class="cprf-input-group">
+                    <label for="lighting-main">Lighting - Video ထဲမှာ မီးအလင်းရောင်ကို ဘယ်လိုဖြစ်စေချင်ပါသလဲ</label>
+                    <textarea id="lighting-main" class="cprf-input" placeholder="ဥပမာ - စူးရှသော အလင်း (Hard light), နူးညံ့သောအလင်းရောင် (Soft light),အပေါ်မှ ကျလာသော အလင်း (Top Light), အရှေ့မှ အလင်းရောင် (Front Light) "></textarea>
+                </div>
+
+                <div class="cprf-input-group">
+                    <label for="scene-main">Scene Dynamics - ကင်မရာ ရွေ့လျားမှုနှင့် ဗီဒီယိုအမြန်နှုန်း</label>
+                    <textarea id="scene-main" class="cprf-input" placeholder="ဥပမာ - ဇာတ်ကောင်၏ မျက်နှာကို ဖြည်းညှင်းစွာ zoom ဆွဲပါ, ကောင်းကင်ကို အချိန်တိုအတွင်း မြန်ဆန်စွာပြသပါ, နောက်သို့ဖြည်းဖြည်းခြင်း ဆုတ်သွားကာ မြင်ကွင်းကျယ်ရိုက်ပြပါ"></textarea>
+                </div>
+
+                <div class="cprf-input-group">
+                    <label for="audio-main">Audio - ဗီဒီယိုတွင် မည်သည့်အသံများ ပါဝင်စေလိုပါသလဲ </label>
+                    <textarea id="audio-main" class="cprf-input" placeholder="ဥပမာ - ငြိမ်သက်သော နောက်ခံတေးသွားနှင့် မိုးရေစက်သံများ"></textarea>
+                </div>
+
+                <button id="generate-prompt-btn" class="action-btn primary-btn full-width-btn" style="margin-bottom: 10px;">✅ Generate & View Prompt</button>
+                <button id="reset-cprf-btn" class="action-btn secondary-btn full-width-btn">Clear Input Fields</button>            </div>
+
+            <div class="column right-col">
+                
+                <button class="main-accordion-header" id="main-examples-toggle">
+                    💡 ဥပမာများ - ကြည့်ရန်
+                </button>
+
+                <div class="main-accordion-content" id="main-examples-content">
+                    <div class="accordion-container">
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-1">
+                                ဥပမာ ၁
+                            </button>
+                            <div class="accordion-content" id="example-1">
+                                <pre class="example-output">
+Style: ရုပ်ရှင်ဆန်ဆန်, သမိုင်းနောက်ခံ ဗီဒီယိုP - သင်သည် နာမည်ကြီး စားသောက်ဆိုင်လုပ်ငန်း စီမံခန့်ခွဲမှု ကျွမ်းကျင်သူ တစ်ဦးဖြစ်ပြီး မြန်မာနိုင်ငံ၏ စျေးကွက်ကို ကောင်းစွာနားလည်သည်။
+Subject: အသက် ၅၀ ဝန်းကျင် ရိုးရာဝတ်စုံဝတ်ထားသော မြန်မာအမျိုးသားတစ်ဦး။
+Action: ဘုရားကျောင်းဆောင်တစ်ခု၏ ကြမ်းပြင်ပေါ်တွင် ဖြည်းညှင်းစွာ လျှောက်လှမ်းနေသည်။
+Environment: ပုဂံ၏ ရှေးဟောင်းဘုရားပုထိုးများ။
+Lighting: နေ့ခင်း၊ နေရောင်ခြည်နွေးနွေးနှင့် ရှည်လျားသော အရိပ်များ။
+Scene Dynamics: အဝေးမှ စရိုက်ပြီး ဇာတ်ကောင်၏ ခြေလှမ်းများကို ဖြည်းညှင်းစွာ လိုက်ရိုက်ကာ နောက်ဆုံးတွင် မျက်နှာကို ဖြည်းဖြည်းခြင်းနီးသွားအောင် Zoom ဆွဲပြီးရိုက်ပါ။
+Audio: ဒရမ်သံများဖြင့် နူးညံ့သော နောက်ခံတေးဂီတ
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>A cinematic, historical video of a Myanmar man in his 50s, dressed in traditional attire. He walks slowly and gracefully on the floor of a temple hall. The scene takes place among the ancient pagodas of Bagan, with warm afternoon sunlight and long shadows. The camera starts wide, slowly tracking his steps, and then performs a slow zoom-in on his face. The video is accompanied by a gentle, ambient background score with subtle drumming.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-2">
+                                ဥပမာ ၂
+                            </button>
+                            <div class="accordion-content" id="example-2">
+                                <pre class="example-output">
+Style: 3D ကာတွန်း, သိပ္ပံစိတ်ကူးယဉ်P - သင်သည် မြန်မာ့စာပေ ပါမောက္ခကြီး တစ်ဦးဖြစ်ပြီး ရှေးဟောင်းကဗျာအမျိုးအစားများနှင့် ၎င်းတို့၏ ရသမြောက်ပုံကို ကျွမ်းကျင်စွာ ရှင်းပြနိုင်သူဖြစ်သည်။
+Subject: ရေစိုနေသော ဆံပင်ရှည်ရှည်ဖြင့် အသက် ၂၀ ဝန်းကျင် အမျိုးသမီး။
+Action: လမ်းဘေးရှိ လက်ဖက်ရည်ဆိုင်မှ ထွက်ခွာပြီး လမ်းမပေါ်သို့ လျှောက်လှမ်းနေသည်။
+Environment: မိုးရွာနေသော အနာဂတ်မြို့ကြီး၏ နီယွန်မီးများ။
+Lighting: ညဘက်၊ ပြင်းထန်သော အပြာနှင့် ပန်းရောင် နီယွန်မီးရောင်များ။
+Scene Dynamics: အပေါ်စီးမှ မြင်ကွင်း (Bird's Eye View) မှ စတင် ရိုက်ကူးကာ၊ ဇာတ်ကောင်ကို ဖြည်းညှင်းစွာ နောက်ကနေ လိုက်၍ ရွေ့လျား ရိုက်ကူးပါ (Dolly Follow Shot) လှုပ်ရှားမှုကို ပုံမှန်အရှိန်ဖြင့် ပြသပါ။
+Audio: လျှပ်စစ်ဂစ်တာသံများ နှင့် မိုးသံ
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>A 3D cartoon, sci-fi animation of a 20-year-old woman with long, wet hair. She leaves a streetside tea shop and walks down a road in a large, futuristic city during a rainstorm. The scene is illuminated by intense blue and pink neon lights at night. The video starts with a bird's eye view and then a dolly follows the character from behind at a normal speed. The audio includes electric guitar sounds and the sound of rain.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-3">
+                                ဥပမာ ၃
+                            </button>
+                            <div class="accordion-content" id="example-3">
+                                <pre class="example-output">
+Style: ဓာတ်ပုံပုံစံ Video, DocumentaryP - သင်သည် အတွေ့အကြုံရင့်ကျက်သော အိမ်ခြံမြေရင်းနှီးမြှုပ်နှံမှု အတိုင်ပင်ခံ (Consultant) တစ်ဦးဖြစ်ပြီး စွန့်စားမှု (Risk) နည်းသော နည်းလမ်းများကို အကြံပေးရာတွင် အလွန်ထူးချွန်သူတစ်ဦးဖြစ်သည်။
+Subject: အသက် ၇၀ ဝန်းကျင် လက်မှုပညာရှင်အမျိုးသမီး။ ဆံပင်ဖြူများ။
+Action: ဝါးခြင်းတောင်းတစ်လုံးကို အသေးစိတ် ထိုးနေသည်။ (လက်၏ လှုပ်ရှားမှုကိုသာ အဓိကထားပြပါ)
+Environment: နေရောင်ခြည်ကျရောက်နေသော သစ်သားအိမ်ခန်းငယ်။
+Lighting: နေ့ခင်း၊ ပြတင်းပေါက်မှ ဝင်လာသော သဘာဝအလင်းရောင်။
+Scene Dynamics: လက်၏အနီးကပ်ပုံမှ စတင်၍ လှုပ်ရှားမှုကို ဖြည်းညှင်းစွာ လိုက်ပြပါ။ လှုပ်ရှားမှုများကို Slow-motion အနည်းငယ်ဖြင့် ဖမ်းယူ ရိုက်ကူးပါ။
+Audio: ဓားသွားများ၏ အသံနှင့် ဝါးခြစ်သံများ၊ နောက်ခံတွင် ငှက်သံများ
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>A photorealistic, documentary-style video of a 70-year-old female craftswoman with white hair. The camera focuses on her hands as she meticulously weaves a bamboo basket. The scene is set inside a small wooden house, illuminated by natural daylight coming from a window. The shot starts with a close-up of her hands and then slowly tracks her movement. The video is in slight slow-motion and includes the sound of her tools scraping the bamboo, with quiet birds chirping in the background.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-4">
+                                ဥပမာ ၄
+                            </button>
+                            <div class="accordion-content" id="example-4">
+                                <pre class="example-output">
+Style: ရုပ်ရှင်ဆန်ဆန်, vlog ပုံစံP - သင်သည် လူငယ်များအတွက် နာမည်ကြီး စိတ်ပညာရှင် တစ်ဦးဖြစ်ပြီး မှတ်ဉာဏ်အား မြှင့်တင်ရေးနည်းလမ်းများကို သိသည်။
+Subject: အသက် ၃၀ ဝန်းကျင် မြန်မာအမျိုးသမီး IT ပညာရှင်။ ဆံပင်တိုတို၊ ခေတ်မီဝတ်စုံ။
+Action: ကွန်ပျူတာရှေ့တွင် ထိုင်၍ ပရိုဂရမ်ရေးသားနေပြီး ကင်မရာကို တိုက်ရိုက်ကြည့်ကာ ရှင်းပြနေသည်။
+Environment: နေရောင်ခြည်ကောင်းစွာရသော ခေတ်မီ Office အခန်း၊ နောက်ခံတွင် စာအုပ်စင်များရှိ။
+Lighting: နေ့ခင်း၊ တောက်ပပြီး ရှင်းလင်းသော အလင်းရောင် 
+Scene Dynamics: Medium Shot မှ စ၍ လက်ပ်တော့မျက်နှာပြင်ပေါ်သို့ ဖြည်းညှင်းစွာ Zoom ဆွဲပြီး ရိုက်ပါ။ မြန်နှုန်းကို ပုံမှန်အတိုင်းထားပါ
+Audio: အေးဆေးဖြစ်သော နောက်ခံတေးဂီတနှင့် အမျိုးသမီး၏ ကြည်လင်ပြတ်သားသော ရှင်းပြသံ
+
+                                </pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>A cinematic, vlog-style video of a 30-year-old Myanmar female IT professional with short hair and modern clothes. She sits in front of a computer, writing a program while explaining it directly to the camera. The scene is in a modern office with good sunlight and a bookshelf in the background, with bright and clear lighting. The camera starts with a medium shot and slowly zooms in on her laptop screen. The audio includes a calm background music and her clear narration.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-header" data-example="example-5">
+                                ဥပမာ ၅
+                            </button>
+                            <div class="accordion-content" id="example-5">
+                                <pre class="example-output">
+Style: သဘာဝနှင့် အလှအပ ဗီဒီယိုP - သင်သည် Digital Marketing ကျွမ်းကျင်သူ ဖြစ်ပြီး မြန်မာ့ထုတ်ကုန်များကို နိုင်ငံတကာစျေးကွက်သို့ ရောင်းချရာတွင် အတွေ့အကြုံရှိသူဖြစ်သည်။
+Subject: ကလေးတစ်ယောက် အသက် ၁၅ နှစ်အရွယ်။ ဆံပင်ရှည်ရှည်။
+Action: ပန်းခင်းထဲတွင် ဖြည်းညှင်းစွာ လျှောက်လှမ်းပြီး ပန်းပွင့်များကို လက်ဖြင့် အသာအယာ ထိတွေ့နေသည်။
+Environment: ရာသီအလိုက် ပွင့်သော ပန်းများဖြင့် ပြည့်နေသော တောင်ကုန်းပေါ်မှ ကျယ်ပြန့်သော ပန်းခင်း။
+Lighting: ညနေခင်း၊ နူးညံ့ပြီး ရွှေရောင်ဆင်သော အလင်းရောင်။
+Scene Dynamics: ဇာတ်ကောင်ကို ရှေ့ကနေ ဖြည်းညှင်းစွာ လိုက်ပြီး ရိုက်ကူးပါ။ မြင်ကွင်းအများစုကို Slow-motion ဖြင့် ရိုက်ကူးပါ။ 
+Audio: လေတိုက်သံနှင့် ငှက်သံများ၊ နောက်ခံတွင် နူးညံ့သော ဂစ်တာတေးသွား
+</pre>
+                                <div class="example-result">
+                                    <h4>Result:</h4>
+                                    <p>A dreamy, slow-motion video with a peaceful and natural vibe. A 15-year-old child with long hair walks slowly through a vast flower field on a hill and gently touches the flowers with her hands. The lighting is the golden hour of the evening, with soft, golden light. The camera slowly follows the character from the front. The audio includes the sounds of the wind and birds, with a gentle acoustic guitar playing in the background.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div> 
+        
+        
+    </div>
+
+    <script type="text/javascript">
+    
+        // --- NEW: Client-Side Translation Helper Function ---
+        // This uses a public Google endpoint for dynamic translation.
+        function translateText(text) {
+            return new Promise((resolve, reject) => {
+                if (!text) return resolve('');
+    
+                // Using the unofficial but effective endpoint for client-side translation
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=my&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+    
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Extract translated segments and join them
+                        if (data && data[0] && data[0].length > 0) {
+                            const translatedText = data[0].map(segment => segment[0]).join('');
+                            resolve(translatedText);
+                        } else {
+                            reject(new Error("Translation API returned unexpected format."));
+                        }
+                    })
+                    .catch(error => {
+                        reject(new Error("Network or API call failed: " + error.message));
+                    });
+            });
+        }
+        // --- END Translation Helper ---
+    
+        document.addEventListener("DOMContentLoaded", () => {
+            // [Keep all existing Accordion and Master Toggle logic here if present]
+             // 1. Master Examples Toggle Logic (Keep original logic)
+             const mainToggleBtn = document.getElementById("main-examples-toggle");
+            const mainContent = document.getElementById("main-examples-content");
+    
+            if (mainToggleBtn && mainContent) {
+                mainToggleBtn.addEventListener("click", () => {
+                    mainToggleBtn.classList.toggle("active");
+                    mainContent.classList.toggle("active");
+                });
+                mainToggleBtn.classList.add("active");
+                mainContent.classList.add("active");
+            }
+    
+    
+            // 2. Individual Example Accordion Logic (Keep original logic)
+            const accordionHeaders = document.querySelectorAll(".accordion-header");
+    
+            accordionHeaders.forEach(header => {
+                header.addEventListener("click", () => {
+                    const targetId = header.getAttribute("data-example");
+                    const targetContent = document.getElementById(targetId);
+    
+                    accordionHeaders.forEach(h => {
+                        if (h !== header) {
+                            h.classList.remove("active");
+                            document.getElementById(h.getAttribute("data-example")).classList.remove("active");
+                        }
+                    });
+    
+                    targetContent.classList.toggle("active");
+                    header.classList.toggle("active");
+                });
+            });
+    
+            document.querySelectorAll(".accordion-content").forEach(content => content.classList.remove("active"));
+            document.querySelectorAll(".accordion-header").forEach(header => header.classList.remove("active"));
+    
+    
+            const generatePromptBtn = document.getElementById("generate-prompt-btn");
+    
+            if (generatePromptBtn) {
+                generatePromptBtn.addEventListener("click", async (event) => {
+                    event.preventDefault(); 
+                    
+                    // 1. Retrieve all seven input values (SSAELSA)
+                    const style_mm = document.getElementById("style-main").value;
+                    const subject_mm = document.getElementById("subject-main").value;
+                    const action_mm = document.getElementById("action-main").value;
+                    const environment_mm = document.getElementById("environment-main").value;
+                    const lighting_mm = document.getElementById("lighting-main").value;
+                    // Assuming you use these IDs for Scene Dynamics and Audio
+                    const camera_mm = document.getElementById("scene-main").value; 
+                    const audio_mm = document.getElementById("audio-main").value;
+    
+                    
+                    // Combine inputs for translation. Use commas to separate concepts.
+                    const fullBurmesePrompt = `${style_mm}${subject_mm}${action_mm}${environment_mm}${lighting_mm}${camera_mm}${audio_mm}`;
+    
+                    // Display a loading message
+                    generatePromptBtn.textContent = 'Translating and Generating...';
+                    generatePromptBtn.disabled = true;
+    
+                    try {
+                        // 2. Call the client-side translation function
+                        const final_prompt_en = await translateText(fullBurmesePrompt);
+    
+                        // 3. Package the final result data
+                        const dataToSave = {
+                            success: true,
+                            source: 'video', // **CRITICAL: Set source to 'video'**
+                            
+                            // Save original Burmese inputs for display on result page
+                            style_mm: style_mm,
+                            subject_mm: subject_mm,
+                            action_mm: action_mm,
+                            environment_mm: environment_mm,
+                            lighting_mm: lighting_mm,
+                            camera_mm: camera_mm, // Scene Dynamics
+                            audio_mm: audio_mm,   // Audio
+                            
+                            // The dynamically translated result
+                            final_prompt_en: final_prompt_en
+                        };
+    
+                        // 4. Save the data to localStorage
+                        localStorage.setItem('promptData', JSON.stringify(dataToSave));
+    
+                        // Restore button state
+                        generatePromptBtn.textContent = '✅ Generate & View Prompt';
+                        generatePromptBtn.disabled = false;
+    
+                        // 5. Redirect to the result page
+                        window.location.href = `result.html`;
+    
+                    } catch (error) {
+                        // Restore button state and show alert
+                        generatePromptBtn.textContent = '❌ Translation Failed. Try Again.';
+                        generatePromptBtn.disabled = false;
+                        console.error('Translation Error:', error);
+                        alert('Translation Error: ' + error.message + '. Please ensure your browser is connected to the internet.');
+                    }
+                });
+            }
+    
+            // --- NEW LOGIC: Clear Input Fields (Updated for 7 SSAELSA fields) ---
+            const resetBtn = document.getElementById("reset-cprf-btn");
+    
+            if (resetBtn) {
+                resetBtn.addEventListener("click", () => {
+                    // Clear all seven SSAELSA input fields
+                    document.getElementById("style-main").value = '';
+                    document.getElementById("subject-main").value = '';
+                    document.getElementById("action-main").value = '';
+                    document.getElementById("environment-main").value = '';
+                    document.getElementById("lighting-main").value = '';
+                    document.getElementById("camera-main").value = ''; // Scene Dynamics
+                    document.getElementById("audio-main").value = '';   // Audio
+                    
+                    document.getElementById("style-main").focus();
+                });
+            }
+        });
+        </script>
+</body>
+</html>

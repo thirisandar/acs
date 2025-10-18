@@ -1,0 +1,264 @@
+:root {
+    --primary-color: #007bff; /* Blue */
+    --secondary-color: #28a745; /* Green */
+    --background-color: #f8f9fa; /* Light Gray */
+    --card-background: #ffffff; /* White */
+    --text-color: #343a40; /* Dark Gray */
+    --border-color: #ced4da;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    /* min-height: 70vh; */
+}
+
+.container {
+    background-color: var(--card-background);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 700px;
+}
+
+h1 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 5px;
+    margin-top: -40px;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+/* --- Input/Output Sections --- */
+
+.input-section, .output-section {
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1em;
+    min-height: 130px;
+    resize: none;
+    transition: border-color 0.3s;
+}
+
+textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* --- Buttons --- */
+
+#generateBtn {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+#generateBtn:hover {
+    background-color: #0056b3;
+}
+
+#generateBtn:active {
+    transform: scale(0.99);
+}
+
+#copyBtn {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+#copyBtn:hover {
+    background-color: #1e7e34;
+}
+
+/* --- Status Message --- */
+
+#statusMessage {
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-weight: bold;
+    transition: opacity 0.3s;
+}
+
+.status-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.hidden {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* ... (Keep all existing CSS from the previous response) ... */
+
+/* --- New Styles for Button Group --- */
+
+.button-group {
+    display: flex; /* Arranges buttons horizontally */
+    gap: 10px; /* Space between buttons */
+    margin-top: 15px;
+}
+
+.button-group button {
+    flex-grow: 1; /* Makes all buttons take equal width */
+    padding: 12px 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.button-group button:hover {
+    background-color: #0056b3;
+}
+
+.button-group button:active {
+    transform: scale(0.98);
+}
+
+/* Optional: Different colors for variety */
+#generateImageBtn {
+    background-color: #ffc107; /* Yellow/Orange */
+    color: var(--text-color);
+}
+#generateImageBtn:hover {
+    background-color: #e0a800;
+}
+
+#generateVideoBtn {
+    background-color: #dc3545; /* Red */
+}
+#generateVideoBtn:hover {
+    background-color: #c82333;
+}
+
+/* ==================================== */
+/* 📱 Mobile Responsiveness (Max Width: 600px) */
+/* ==================================== */
+@media (max-width: 500px) {
+    /* 1. Body & Main Container Adjustments */
+    body {
+        /* Reduce padding for max use of screen space */
+        padding: 15px;
+    }
+
+    .container {
+        /* Remove fixed width limit to allow it to fill the screen */
+        width: 100%;
+        max-width: 100%;
+        /* No fixed height, let content define the height */
+        height: auto;
+        padding: 15px;
+    }
+
+    /* 2. Header and Title */
+    h1 {
+        font-size: 1.5em; /* Smaller title for mobile */
+        margin-bottom: 15px;
+        margin-top: -20px;
+    }
+
+    /* 3. Input & Output Area (The core change) */
+    .input-group {
+        /* Ensure the input areas stack vertically on small screens */
+        flex-direction: column;
+        gap: 20px; /* Space between the two text areas */
+    }
+
+    .input-box,
+    .output-box {
+        /* Allow each box to take the full width of the screen */
+        width: 100%;
+        /* Ensure minimum height for a good typing area */
+        min-height: 200px; 
+    }
+
+    /* Remove the label that might take up unnecessary space on mobile */
+    .input-box h3,
+    .output-box h3 {
+        font-size: 1.1em;
+        margin-bottom: 8px;
+    }
+
+    textarea {
+        /* Ensure the textarea fills its container completely */
+        height: calc(100% - 30px); /* Adjust height to fill the box */
+        font-size: 14px; /* Slightly smaller text for better fit */
+    }
+
+    /* 4. Button & Actions */
+    .action-row {
+        /* Ensure buttons are centered if needed */
+        justify-content: center;
+        flex-direction: column; /* Stack buttons vertically if more are added */
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .genbtn{
+        width: 50px;
+        padding: 10px 15px;
+    }
+    button {
+        /* Make button wider and easier to tap */
+        width: 50%;
+        padding: 10px;
+        font-size: 1.1em;
+    }
+}

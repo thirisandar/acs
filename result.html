@@ -1,0 +1,257 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Result</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f9f9fb; }
+        .container { max-width: 800px; margin: 0 auto; padding: 30px; background-color: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        h1 { color: #1E90FF; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 20px; }
+        h3 { color: #3CB371; margin-top: 20px; }
+        pre { 
+            background-color: #f0f8ff; 
+            padding: 20px; 
+            border-radius: 6px; 
+            white-space: pre-wrap; 
+            word-break: break-word; 
+            border: 1px dashed #1E90FF; 
+            font-size: 1.1em; 
+            line-height: 1.5; 
+            overflow-x: auto; /* Ensure horizontal scroll for very long lines */
+        }
+        .back-btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #333; color: white; border-radius: 6px; text-decoration: none; }
+        .cprf-section { margin-top: 15px; padding: 15px; border-left: 5px solid var(--primary-color, #1E90FF); background-color: #fcfcfc; border-radius: 4px;}
+        .cprf-section strong { display: block; margin-bottom: 5px; color: #1E90FF; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="page-title">✨ Your Generated Prompt</h1>
+
+        <div id="cprf-details">
+            </div>
+
+        <h3>📝 Final AI Prompt:</h3>
+        <pre id="final-prompt"></pre>
+        
+        <a id="back-link" href="index.html" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    
+       <script>
+    
+    // Inside result.html's <script> block
+
+document.addEventListener('DOMContentLoaded', () => {
+    const detailsDiv = document.getElementById('cprf-details');
+    const finalPromptPre = document.getElementById('final-prompt');
+    const title = document.getElementById('page-title');
+
+    // Read the translated data saved by the fetch request
+    const data = JSON.parse(localStorage.getItem('translatedResult')); 
+
+    if (data && data.final_prompt_en) {
+        // Display title (adjust to your result.html structure)
+        if (title) title.textContent = "📝 Text Prompt Result (CPRF)";
+
+        // Display the original Burmese inputs
+        if (detailsDiv) {
+            detailsDiv.innerHTML = `
+                <div class="cprf-section"><strong>Context (C):</strong> ${data.context_mm}</div>
+                <div class="cprf-section"><strong>Persona (P):</strong> ${data.persona_mm}</div>
+                <div class="cprf-section"><strong>Result (R):</strong> ${data.result_mm}</div>
+                <div class="cprf-section"><strong>Format (F):</strong> ${data.format_mm}</div>
+            `;
+        }
+
+        // Display the dynamically translated English prompt in the box
+        if (finalPromptPre) {
+             finalPromptPre.textContent = data.final_prompt_en;
+        }
+        
+        localStorage.removeItem('translatedResult'); // Clean up the storage
+
+    } else {
+        // Fallback or Error Case
+        if (title) title.textContent = "❌ Error: Prompt Data Missing";
+        if (detailsDiv) detailsDiv.innerHTML = `<p>Prompt data could not be retrieved. Please go back to the text-prompt page and try again.</p>`;
+        if (finalPromptPre) finalPromptPre.textContent = "Error: Check the browser console.";
+    }
+});
+</script>
+   
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Result</title>
+    <style>
+        /* CSS from text-prompt.html for consistency */
+        :root {
+            --primary-blue: #1E90FF; /* Dodger Blue */
+            --secondary-green: #3CB371; /* Medium Sea Green */
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f9f9fb; }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 30px; 
+            background-color: white; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
+        }
+        h1 { 
+            color: var(--primary-blue); 
+            border-bottom: 2px solid #e0e0e0; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+        }
+        h3 { 
+            color: var(--secondary-green); 
+            margin-top: 20px; 
+        }
+        pre { 
+            background-color: #333; /* Darker background for code/prompt */
+            color: #E0E0E0;
+            padding: 20px; 
+            border-radius: 6px; 
+            white-space: pre-wrap; 
+            word-break: break-word; 
+            border: 1px dashed var(--primary-blue); 
+            font-size: 1.1em; 
+            line-height: 1.5; 
+            min-height: 200px;
+            overflow-x: auto;
+        }
+        .action-area {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .action-btn { 
+            display: inline-block; 
+            margin-top: 20px; 
+            padding: 10px 20px; 
+            background-color: #333; 
+            color: white; 
+            border-radius: 6px; 
+            text-decoration: none; 
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .action-btn:hover {
+             background-color: #555;
+        }
+        .copy-btn {
+            background-color: var(--secondary-green);
+        }
+        .copy-btn:hover {
+            background-color: #319e61;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="page-title">✨ Final Generated AI Prompt</h1>
+
+        <div id="original-inputs-details">
+            </div>
+        
+        <h3>📝 Your Translated English Prompt:</h3>
+        <pre id="final-prompt">Awaiting translated result from server...</pre>
+        
+        <div class="action-area">
+            <button class="action-btn copy-btn" onclick="copyPrompt()">
+                📋 Copy Final Prompt
+            </button>
+            <a id="back-link" href="index.html" class="action-btn">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    
+    <script>
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            const detailsDiv = document.getElementById('original-inputs-details'); // New details div
+            const finalPromptPre = document.getElementById('final-prompt');
+            const title = document.getElementById('page-title');
+    
+            // *** CRITICAL FIX: Read the correct key 'promptData' ***
+            const dataJSON = localStorage.getItem('promptData'); 
+            const data = dataJSON ? JSON.parse(dataJSON) : null;
+    
+            if (data && data.final_prompt_en) {
+                title.textContent = "✅ Dynamic Prompt Translation Complete";
+    
+                // --- Dynamic Rendering Logic ---
+                let innerHTML = '';
+                
+                if (data.source === 'text') {
+                    title.textContent = "📝 Text Prompt Result (CPRF)";
+                    // CPRF Fields: c, p, r, f
+                    innerHTML = `
+                        <div class="cprf-section" style="--primary-color: var(--primary-blue);"><strong>Context (C):</strong> ${data.context_mm}</div>
+                        <div class="cprf-section" style="--primary-color: var(--primary-blue);"><strong>Persona (P):</strong> ${data.persona_mm}</div>
+                        <div class="cprf-section" style="--primary-color: var(--primary-blue);"><strong>Result (R):</strong> ${data.result_mm}</div>
+                        <div class="cprf-section" style="--primary-color: var(--primary-blue);"><strong>Format (F):</strong> ${data.format_mm}</div>
+                    `;
+                } else if (data.source === 'image') {
+                    title.textContent = "🖼️ Image Prompt Result (SSAEL)";
+                    // SSAEL Fields: style, subject, action, environment, lighting
+                    innerHTML = `
+                        <div class="cprf-section" style="--primary-color: #ffc107;"><strong>Style (S):</strong> ${data.style_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #ffc107;"><strong>Subject (S):</strong> ${data.subject_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #ffc107;"><strong>Action (A):</strong> ${data.action_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #ffc107;"><strong>Environment (E):</strong> ${data.environment_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #ffc107;"><strong>Lighting (L):</strong> ${data.lighting_mm}</div>
+                    `;
+                } else if (data.source === 'video') {
+                    title.textContent = "🎥 Video Prompt Result (SSAELSA)";
+                    // SSAELSA Fields: style, subject, action, environment, lighting, camera, audio
+                    innerHTML = `
+                        <div class="cprf-section" style="--primary-color: #dc3545;"><strong>Style (S):</strong> ${data.style_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #dc3545;"><strong>Subject (S):</strong> ${data.subject_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #dc3545;"><strong>Action (A):</strong> ${data.action_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #dc3545;"><strong>Environment (E):</strong> ${data.environment_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #dc3545;"><strong>Lighting (L):</strong> ${data.lighting_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #dc3545;"><strong>Scene Dynamics (S):</strong> ${data.camera_mm}</div>
+                        <div class="cprf-section" style="--primary-color: #dc3545;"><strong>Audio (A):</strong> ${data.audio_mm}</div>
+                    `;
+                } else {
+                     title.textContent = "❓ Unknown Prompt Type";
+                     innerHTML = `<p>The prompt source could not be identified.</p>`;
+                }
+    
+                // Inject the generated input HTML
+                detailsDiv.innerHTML = innerHTML;
+    
+                // Display the final translated English prompt
+                finalPromptPre.textContent = data.final_prompt_en;
+                
+                localStorage.removeItem('promptData'); // Clean up the storage
+    
+            } else {
+                // Error Case
+                title.textContent = "❌ Error: Prompt Data Missing";
+                detailsDiv.innerHTML = `<p>Prompt data could not be retrieved. Please go back to the dashboard and select an editor.</p>`;
+                finalPromptPre.textContent = "Error: Translation result not found. Please check the browser console and ensure your Vercel serverless function is running.";
+            }
+        });
+    
+        function copyPrompt() {
+            const promptText = document.getElementById('final-prompt').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert('English Prompt copied to clipboard!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                alert('Failed to copy prompt.');
+            });
+        }
+        </script>
+</body>
+</html>
