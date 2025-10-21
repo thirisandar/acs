@@ -124,7 +124,7 @@ async function translateText(text) {
     if (!text) return '';
 
     // The endpoint points to your Netlify Function file: /netlify/functions/gemini-translate
-    const endpoint = '/.netlify/functions/gemini-translate';
+    const endpoint = 'netlify/functions/gemini-translate';
 
     const response = await fetch(endpoint, {
         method: 'POST',
