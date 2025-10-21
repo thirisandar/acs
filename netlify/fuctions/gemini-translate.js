@@ -18,7 +18,7 @@ exports.handler = async (event, context) => {
         }
         
         // Define the prompt to tell Gemini exactly what you want
-        const systemInstruction = "You are an expert, context-aware translation engine. Your task is to translate the user-provided text from Burmese (my) to professional English (en). Preserve all technical terms and translate the overall creative intent accurately. ONLY return the translated text.";
+        const systemInstruction = "You are an expert, context-aware translation engine. Your task is to translate the user-provided text from Burmese (my) to professional English (en) for English complete prompt . Preserve all technical terms and translate the overall creative intent accurately. ONLY return the translated text.";
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash", // A fast, capable model for translation

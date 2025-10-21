@@ -6,7 +6,7 @@
 //     const statusMessage = document.getElementById('statusMessage');
 //     const generateButtons = document.querySelectorAll('.button-group button');
 
-//     // --- API Configuration (USE YOUR SECURE BACKEND ENDPOINT HERE) ---
+//     // --- API Configu   ration (USE YOUR SECURE BACKEND ENDPOINT HERE) ---
 //     // The Gemini API Key should be securely stored on your server (backend function), NOT here.
 //     const TRANSLATION_API_URL = 'https://YOUR-SECURE-SERVER-ENDPOINT.com/gemini-translate'; 
     
