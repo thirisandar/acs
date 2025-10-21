@@ -94,31 +94,6 @@ generatePromptBtn.addEventListener("click", async (event) => {
 });
 }
 
-// --- NEW: Client-Side Translation Helper Function ---
-// This uses a non-official Google Translate endpoint that works well for quick tests.
-// function translateText(text) {
-// return new Promise((resolve, reject) => {
-//     if (!text) return resolve('');
-
-//     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=my&tl=en&dt=t&q=${encodeURIComponent(text)}`;
-
-//     fetch(url)
-//         .then(response => response.json())
-//         .then(data => {
-//             // The translation is usually the first element of the first array
-//             if (data && data[0] && data[0][0] && data[0][0][0]) {
-//                 const translatedText = data[0].map(segment => segment[0]).join('');
-//                 resolve(translatedText);
-//             } else {
-//                 reject(new Error("Translation API returned unexpected format."));
-//             }
-//         })
-//         .catch(error => {
-//             reject(new Error("Network or API call failed: " + error.message));
-//         });
-// });
-// }
-
 // --- NEW SECURE Netlify Function Call using fetch ---
 async function translateText(text) {
     if (!text) return '';
@@ -130,14 +105,16 @@ async function translateText(text) {
         headers: {
             'Content-Type': 'application/json',
         },
-        // Send the Burmese text securely in the request body
-        body: JSON.stringify({ text_to_translate: text }),
+        // *** CRITICAL FIX APPLIED HERE: Use 'prompt' as the key to match server logic ***
+        body: JSON.stringify({ prompt: text }),
     });
 
     if (!response.ok) {
         // Throw an error if the server function failed (e.g., API key issue)
         const errorData = await response.json().catch(() => ({ error: "Unknown server error" }));
-        throw new Error(`Server translation failed: ${response.statusText}. Details: ${errorData.error}`);
+        // Ensure errorData.error exists before trying to access it
+        const detailError = errorData.error || response.statusText; 
+        throw new Error(`Server translation failed: ${response.status}. Details: ${detailError}`);
     }
 
     const data = await response.json();
