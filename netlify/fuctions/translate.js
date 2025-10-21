@@ -1,44 +1,50 @@
-// /netlify/functions/translate.js
+// netlify/functions/gemini-translate.js
+const { GoogleGenAI } = require('@google/genai');
 
-const { GoogleGenAI } = require("@google/genai");
-
-// The Gemini API key is loaded automatically from Netlify's environment variables
-// This keeps the key secret!
-const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
+// The Gemini client will automatically pick up the GEMINI_API_KEY 
+// from your Netlify Environment Variables.
+const ai = new GoogleGenAI({}); 
 
 exports.handler = async (event, context) => {
-    // Only allow POST requests
-    if (event.httpMethod !== "POST") {
-        return { statusCode: 405, body: "Method Not Allowed" };
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
     try {
-        const { text } = JSON.parse(event.body);
+        const { text_to_translate } = JSON.parse(event.body);
 
-        if (!text) {
-            return { statusCode: 400, body: "Missing 'text' in request body" };
+        if (!text_to_translate) {
+            return { statusCode: 400, body: JSON.stringify({ error: 'Missing text_to_translate field.' }) };
         }
-
-        // --- Core Gemini API Call for Translation ---
-        const prompt = `Translate the following Burmese text to a concise, professional English image generation prompt. The final output must only be the English translation and nothing else. Burmese Text: "${text}"`;
+        
+        // Define the prompt to tell Gemini exactly what you want
+        const systemInstruction = "You are an expert, context-aware translation engine. Your task is to translate the user-provided text from Burmese (my) to professional English (en). Preserve all technical terms and translate the overall creative intent accurately. ONLY return the translated text.";
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash", // Fast and capable model
-            contents: prompt,
+            model: "gemini-2.5-flash", // A fast, capable model for translation
+            contents: text_to_translate,
+            config: {
+                systemInstruction: systemInstruction,
+            },
         });
 
-        const translatedText = response.text.trim();
+        // Extract the translated text
+        const final_prompt_en = response.text.trim();
 
+        // Return the English prompt securely
         return {
             statusCode: 200,
-            body: JSON.stringify({ translatedText }),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ final_prompt_en: final_prompt_en }),
         };
 
     } catch (error) {
-        console.error("Gemini Translation Error:", error);
+        console.error("Gemini Translation Error:", error.message);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Translation service failed." }),
+            body: JSON.stringify({ error: 'Server translation failed.', details: error.message }),
         };
     }
 };

@@ -96,28 +96,61 @@ generatePromptBtn.addEventListener("click", async (event) => {
 
 // --- NEW: Client-Side Translation Helper Function ---
 // This uses a non-official Google Translate endpoint that works well for quick tests.
-function translateText(text) {
-return new Promise((resolve, reject) => {
-    if (!text) return resolve('');
+// function translateText(text) {
+// return new Promise((resolve, reject) => {
+//     if (!text) return resolve('');
 
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=my&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+//     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=my&tl=en&dt=t&q=${encodeURIComponent(text)}`;
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            // The translation is usually the first element of the first array
-            if (data && data[0] && data[0][0] && data[0][0][0]) {
-                const translatedText = data[0].map(segment => segment[0]).join('');
-                resolve(translatedText);
-            } else {
-                reject(new Error("Translation API returned unexpected format."));
-            }
-        })
-        .catch(error => {
-            reject(new Error("Network or API call failed: " + error.message));
-        });
-});
+//     fetch(url)
+//         .then(response => response.json())
+//         .then(data => {
+//             // The translation is usually the first element of the first array
+//             if (data && data[0] && data[0][0] && data[0][0][0]) {
+//                 const translatedText = data[0].map(segment => segment[0]).join('');
+//                 resolve(translatedText);
+//             } else {
+//                 reject(new Error("Translation API returned unexpected format."));
+//             }
+//         })
+//         .catch(error => {
+//             reject(new Error("Network or API call failed: " + error.message));
+//         });
+// });
+// }
+
+// --- NEW SECURE Netlify Function Call using fetch ---
+async function translateText(text) {
+    if (!text) return '';
+
+    // The endpoint points to your Netlify Function file: /netlify/functions/gemini-translate
+    const endpoint = '/.netlify/functions/translate.js';
+
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        // Send the Burmese text securely in the request body
+        body: JSON.stringify({ text_to_translate: text }),
+    });
+
+    if (!response.ok) {
+        // Throw an error if the server function failed (e.g., API key issue)
+        const errorData = await response.json().catch(() => ({ error: "Unknown server error" }));
+        throw new Error(`Server translation failed: ${response.statusText}. Details: ${errorData.error}`);
+    }
+
+    const data = await response.json();
+    
+    // The server function sends back an object with 'final_prompt_en'
+    if (data.final_prompt_en) {
+        return data.final_prompt_en;
+    } else {
+        throw new Error("Invalid response format from the translation server.");
+    }
 }
+// --- END NEW SECURE FUNCTION ---
 // --- Clear Input Fields Logic (Kept as is) ---
 const resetBtn = document.getElementById("reset-cprf-btn");
 

@@ -2,9 +2,10 @@
     "name": "prompt-generator-app",
     "version": "1.0.0",
     "scripts": {
-      "minify": "terser main.js script.js image-prompt.js text-prompt.js video-prompt.js result.js -o dist/main.js -o dist/script.js -o dist/image-prompt.js -o dist/text-prompt.js -o dist/video-prompt.js -o dist/result.js"
+        "minify": "terser main.js script.js image-prompt.js text-prompt.js video-prompt.js result.js -o dist/main.js -o dist/script.js -o dist/image-prompt.js -o dist/text-prompt.js -o dist/video-prompt.js -o dist/result.js"
     },
     "dependencies": {
-      "terser": "^5.28.0"
+        "@google/genai": "^1.25.0",
+        "terser": "^5.28.0"
     }
-  }
+}

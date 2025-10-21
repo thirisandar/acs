@@ -1,27 +1,59 @@
-function translateText(text) {
-    return new Promise((resolve, reject) => {
-        if (!text) return resolve('');
+// function translateText(text) {
+//     return new Promise((resolve, reject) => {
+//         if (!text) return resolve('');
 
-        // Using the unofficial but effective endpoint for client-side translation
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=my&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+//         // Using the unofficial but effective endpoint for client-side translation
+//         const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=my&tl=en&dt=t&q=${encodeURIComponent(text)}`;
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                // Extract translated segments and join them
-                if (data && data[0] && data[0].length > 0) {
-                    const translatedText = data[0].map(segment => segment[0]).join('');
-                    resolve(translatedText);
-                } else {
-                    reject(new Error("Translation API returned unexpected format."));
-                }
-            })
-            .catch(error => {
-                reject(new Error("Network or API call failed: " + error.message));
-            });
-    });
-}
+//         fetch(url)
+//             .then(response => response.json())
+//             .then(data => {
+//                 // Extract translated segments and join them
+//                 if (data && data[0] && data[0].length > 0) {
+//                     const translatedText = data[0].map(segment => segment[0]).join('');
+//                     resolve(translatedText);
+//                 } else {
+//                     reject(new Error("Translation API returned unexpected format."));
+//                 }
+//             })
+//             .catch(error => {
+//                 reject(new Error("Network or API call failed: " + error.message));
+//             });
+//     });
+// }
 // --- END Translation Helper ---
+// --- NEW SECURE Netlify Function Call using fetch ---
+async function translateText(text) {
+    if (!text) return '';
+
+    // This endpoint calls your secure serverless function
+    const endpoint = '/.netlify/functions/translate.js'; 
+
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        // Send the Burmese text securely in the request body
+        body: JSON.stringify({ text_to_translate: text }),
+    });
+
+    if (!response.ok) {
+        // Handle server-side errors securely
+        const errorData = await response.json().catch(() => ({ error: "Unknown server error" }));
+        throw new Error(`Server translation failed: ${response.statusText}. Details: ${errorData.error}`);
+    }
+
+    const data = await response.json();
+    
+    // The server function sends back the final translated prompt
+    if (data.final_prompt_en) {
+        return data.final_prompt_en;
+    } else {
+        throw new Error("Invalid response format from the secure translation server.");
+    }
+}
+// --- END NEW SECURE FUNCTION ---
 
 document.addEventListener("DOMContentLoaded", () => {
     // [Keep all existing Accordion and Master Toggle logic here if present]

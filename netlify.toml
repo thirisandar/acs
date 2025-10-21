@@ -1,7 +1,6 @@
 [build]
-  command = "npm install && npm run minify" # Run your minification command
-  publish = "dist" # Assuming 'dist' is your final output folder for HTML/CSS/JS
-
+  command = "npm install && npm run minify" 
+  publish = "." 
 [functions]
   directory = "netlify/functions"
-    node_bundler = "esbuild"  
+  node_bundler = "esbuild"                      
