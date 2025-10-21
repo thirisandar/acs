@@ -35,7 +35,7 @@ async function translateText(text) {
         },
         // Send the Burmese text securely in the request body
         body: JSON.stringify({ text_to_translate: text }),
-    });
+    }); 
 
     if (!response.ok) {
         // Handle server-side errors securely
