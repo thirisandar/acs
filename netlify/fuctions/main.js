@@ -54,4 +54,4 @@ exports.handler = async (event, context) => {
             body: JSON.stringify({ error: 'Server translation failed.', details: error.message }),
         };
     }
-};  
+};          
