@@ -4,7 +4,6 @@
     "scripts": {
   }, 
     "dependencies": {
-    "@google/genai": "^1.25.0",
-    "terser": "^5.28.0"
+    "@google/genai": "^1.25.0"
   }
 }
