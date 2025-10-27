@@ -27,7 +27,7 @@ async function translateText(text) {
     if (!text) return '';
 
     // This endpoint calls your secure serverless function
-    const endpoint = '/.netlify/functions/gemini-translate';            
+    const endpoint = '/.netlify/functions/main';            
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
